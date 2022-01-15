@@ -5,8 +5,6 @@ import com.uc.rideservice.dto.RideRequestDto;
 import com.uc.rideservice.dto.TripUpdateDto;
 import com.uc.rideservice.entity.Trip;
 import com.uc.rideservice.entity.RideRequest;
-import com.uc.rideservice.enums.TripStatus;
-import com.uc.rideservice.enums.VehicleStatus;
 import com.uc.rideservice.service.RideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PatchMapping;

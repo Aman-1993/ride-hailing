@@ -2,7 +2,6 @@ package com.uc.rideservice.dto;
 
 import com.uc.rideservice.enums.VehicleCategory;
 import com.uc.rideservice.enums.VehicleStatus;
-import com.uc.rideservice.enums.VehicleType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -15,11 +14,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VehicleDto {
-  private VehicleType type;
   private String regNo;
   private String make;
   private String model;
-  private VehicleCategory category;
   @Enumerated(EnumType.STRING)
   private VehicleStatus status= VehicleStatus.OFFLINE;
+  @Enumerated(EnumType.STRING)
+  private VehicleCategory category;
+
 }

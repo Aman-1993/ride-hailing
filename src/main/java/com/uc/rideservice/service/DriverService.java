@@ -22,21 +22,23 @@ public class DriverService {
   private DriverMapper driverMapper;
 
   @Autowired
-  private VehicleService vehicleService;
+  private IVehicleFactory vehicleFactory;
 
   public Driver register(DriverDto driverDto) {
     VehicleDto vehicleDto = driverDto.getVehicle();
-    Vehicle vehicle = vehicleService.register(vehicleDto);
+    Vehicle vehicle = vehicleFactory.getVehicleService(driverDto.getVehicleType())
+        .register(vehicleDto);
     Driver driver = driverMapper.toEntity(driverDto, vehicle.getId());
     return driverRepo.save(driver);
   }
 
   public Location updateDriverLocation(long driverId, Location location) {
     Driver driver = getDriverById(driverId);
-    Vehicle vehicle = vehicleService.getVehicleById(driver.getVehicleId());
+    Vehicle vehicle = vehicleFactory.getVehicleService(driver.getVehicleType())
+        .getVehicleById(driver.getVehicleId());
     vehicle.setLatitude(location.getLatitude());
     vehicle.setLongitude(location.getLongitude());
-    vehicleService.saveOrUpdate(vehicle);
+    vehicleFactory.getVehicleService(driver.getVehicleType()).saveOrUpdateVehicle(vehicle);
     return location;
   }
 
@@ -50,9 +52,10 @@ public class DriverService {
 
   public VehicleStatus updateStatus(long id, VehicleStatus status) {
     Driver driver =getDriverById(id);
-    Vehicle vehicle = vehicleService.getVehicleById(driver.getVehicleId());
+    Vehicle vehicle = vehicleFactory.getVehicleService(driver.getVehicleType())
+        .getVehicleById(driver.getVehicleId());
     vehicle.setStatus(status);
-    vehicleService.saveOrUpdate(vehicle);
+    vehicleFactory.getVehicleService(driver.getVehicleType()).saveOrUpdateVehicle(vehicle);
     return status;
   }
 
@@ -63,4 +66,5 @@ public class DriverService {
     }
     return driver.get();
   }
+
 }

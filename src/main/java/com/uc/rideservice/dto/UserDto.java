@@ -9,6 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDto extends PersonDto{
+public class UserDto extends PersonDto {
   private long id;
 }

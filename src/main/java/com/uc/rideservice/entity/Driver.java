@@ -1,6 +1,6 @@
 package com.uc.rideservice.entity;
 
-import com.uc.rideservice.enums.VehicleStatus;
+import com.uc.rideservice.enums.VehicleType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,4 +23,6 @@ public class Driver extends Person{
   private long id;
   private long vehicleId;
   private String license;
+  @Enumerated(EnumType.STRING)
+  private VehicleType vehicleType;
 }

@@ -19,9 +19,10 @@ public class RideRequestDto {
   private Location drop;
   private int passengers;
   @Enumerated(EnumType.STRING)
-  private VehicleCategory category;
+  private VehicleCategory vehicleCategory;
   @Enumerated(EnumType.STRING)
-  private VehicleType vehicleType=VehicleType.FOUR_WHEELER;
+  private VehicleType vehicleType = VehicleType.CAR;
   @NotNull
   private long userId;
+  private String voucherCode;
 }

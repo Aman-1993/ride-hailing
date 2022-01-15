@@ -2,7 +2,6 @@ package com.uc.rideservice.entity;
 
 import com.uc.rideservice.enums.VehicleCategory;
 import com.uc.rideservice.enums.VehicleStatus;
-import com.uc.rideservice.enums.VehicleType;
 import java.math.BigDecimal;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -28,8 +27,6 @@ public abstract class Vehicle {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Enumerated(EnumType.STRING)
-  private VehicleType vehicleType;
   private String regNo;
   @Enumerated(EnumType.STRING)
   private VehicleStatus status;

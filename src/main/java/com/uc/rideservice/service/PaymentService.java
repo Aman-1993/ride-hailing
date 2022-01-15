@@ -4,6 +4,7 @@ import com.uc.rideservice.dto.Location;
 import com.uc.rideservice.enums.VehicleCategory;
 import java.math.BigDecimal;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +20,16 @@ public class PaymentService {
   @Value("${base-distance}")
   BigDecimal baseDistance;
 
-  public BigDecimal getFare(Location pickup, Location drop, VehicleCategory carCategory) {
+  @Autowired
+  DiscountService discountService;
+
+  public BigDecimal getFare(Location pickup, Location drop, VehicleCategory carCategory, String voucherCode) {
     BigDecimal pickupLat = pickup.getLatitude(), pickupLong = pickup.getLongitude();
     BigDecimal dropLat = drop.getLatitude(), dropLong = drop.getLongitude();
     BigDecimal distance = getDistance(pickupLat, pickupLong, dropLat, dropLong);
     BigDecimal fare = getPrice(distance);
-    return fare.multiply(getMultiplier(carCategory, pickup));
+    fare = fare.multiply(getMultiplier(carCategory, pickup));
+    return fare.subtract(discountService.computeDiscount(fare, voucherCode));
   }
 
   private BigDecimal getDistance(BigDecimal lat1, BigDecimal long1, BigDecimal lat2, BigDecimal long2) {

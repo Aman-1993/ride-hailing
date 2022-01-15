@@ -25,9 +25,6 @@ public class RideService {
   PaymentService paymentService;
 
   @Autowired
-  IVehicleService vehicleService;
-
-  @Autowired
   DriverService driverService;
 
   @Autowired
@@ -44,10 +41,11 @@ public class RideService {
 
   public RideRequest requestRide(RideRequestDto rideRequestDto) {
     try {
-      VehicleCategory originalCategory = rideRequestDto.getCategory();
+      VehicleCategory originalCategory = rideRequestDto.getVehicleCategory();
       Vehicle vehicle = vehicleFactory.getVehicleService(rideRequestDto.getVehicleType())
-          .getAvailableVehicle(rideRequestDto.getVehicleType(), rideRequestDto.getCategory(), rideRequestDto.getPickup());
-      BigDecimal fare = paymentService.getFare(rideRequestDto.getPickup(), rideRequestDto.getDrop(), originalCategory);
+          .getAvailableVehicle(rideRequestDto.getVehicleType(), rideRequestDto.getVehicleCategory(), rideRequestDto.getPickup());
+      BigDecimal fare = paymentService.getFare(rideRequestDto.getPickup(), rideRequestDto.getDrop(),
+          originalCategory, rideRequestDto.getVoucherCode());
       Driver driver = driverService.getDriverByVehicleId(vehicle.getId());
 
       //TODO: MapStruct

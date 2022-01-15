@@ -13,8 +13,10 @@ public class VehicleFactory implements IVehicleFactory{
   @Override
   public IVehicleService getVehicleService(VehicleType vehicleType) {
     switch (vehicleType) {
-      default:
+      case CAR:
         return carService;
+      default:
+        throw new RuntimeException("Service does not exist");
     }
   }
 }
