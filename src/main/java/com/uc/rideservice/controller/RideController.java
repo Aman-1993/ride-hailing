@@ -5,8 +5,11 @@ import com.uc.rideservice.dto.RideRequestDto;
 import com.uc.rideservice.dto.TripUpdateDto;
 import com.uc.rideservice.entity.Trip;
 import com.uc.rideservice.entity.RideRequest;
+import com.uc.rideservice.enums.UserType;
 import com.uc.rideservice.service.RideService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,12 +35,18 @@ public class RideController {
   }
 
   @PostMapping
-  public Trip bookRide(@RequestBody RideConfirmDto rideConfirmDto) {
+  public Trip confirmRide(@RequestBody RideConfirmDto rideConfirmDto) {
     return rideService.confirmRide(rideConfirmDto);
   }
 
-  @PatchMapping("/{id}")
-  public Trip updateStatus(@PathVariable long id, @RequestBody TripUpdateDto tripUpdateDto) {
-    return rideService.updateStatus(id, tripUpdateDto);
+  @PostMapping("/{id}/complete")
+  public Trip completeRide(@PathVariable long id) {
+    return rideService.completeRide(id);
   }
+
+  @GetMapping("/{userType}/{id}")
+  public List<Trip> getCompletedRides(@PathVariable UserType userType, @PathVariable long id) {
+    return rideService.getCompletedRides(userType, id);
+  }
+
 }

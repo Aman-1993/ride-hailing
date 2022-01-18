@@ -59,7 +59,7 @@ public class DriverService {
     return status;
   }
 
-  private Driver getDriverById(long id) {
+  public Driver getDriverById(long id) {
     Optional<Driver> driver = driverRepo.getById(id);
     if(driver.isEmpty()) {
       throw new RuntimeException("Invalid driver Id");

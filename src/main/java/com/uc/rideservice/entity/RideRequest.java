@@ -1,6 +1,7 @@
 package com.uc.rideservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -40,6 +41,7 @@ public class RideRequest {
   private BigDecimal dropLatitude;
   private BigDecimal dropLongitude;
   private long userId;
+  @JsonIgnore
   private long driverId;
   @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
   @JsonDeserialize(using = LocalDateTimeDeserializer.class)

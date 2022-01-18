@@ -29,8 +29,8 @@ public class VoucherService {
     return voucherRepo.save(voucher);
   }
 
-  public Optional<Voucher> getVoucherByCode(String voucherCode) {
-    return voucherRepo.getByCode(voucherCode);
+  public Optional<Voucher> getActiveVoucherByCode(String voucherCode) {
+    return voucherRepo.getByCodeAndStatus(voucherCode, VoucherStatus.ACTIVE);
   }
 
   private Voucher getVoucherById(long voucherId) {

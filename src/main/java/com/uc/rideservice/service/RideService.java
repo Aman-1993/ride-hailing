@@ -1,18 +1,21 @@
 package com.uc.rideservice.service;
 
+import com.uc.rideservice.dto.Location;
 import com.uc.rideservice.dto.RideConfirmDto;
 import com.uc.rideservice.dto.RideRequestDto;
-import com.uc.rideservice.dto.TripUpdateDto;
 import com.uc.rideservice.entity.Driver;
 import com.uc.rideservice.entity.Trip;
 import com.uc.rideservice.entity.RideRequest;
 import com.uc.rideservice.entity.Vehicle;
 import com.uc.rideservice.enums.TripStatus;
+import com.uc.rideservice.enums.UserType;
 import com.uc.rideservice.enums.VehicleCategory;
+import com.uc.rideservice.enums.VehicleStatus;
 import com.uc.rideservice.repo.RideRepo;
 import com.uc.rideservice.repo.RideRequestRepo;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,11 +44,11 @@ public class RideService {
 
   public RideRequest requestRide(RideRequestDto rideRequestDto) {
     try {
-      VehicleCategory originalCategory = rideRequestDto.getVehicleCategory();
+      VehicleCategory requestedCategory = rideRequestDto.getVehicleCategory();
       Vehicle vehicle = vehicleFactory.getVehicleService(rideRequestDto.getVehicleType())
-          .getAvailableVehicle(rideRequestDto.getVehicleType(), rideRequestDto.getVehicleCategory(), rideRequestDto.getPickup());
+          .getAvailableVehicle(rideRequestDto.getVehicleCategory(), rideRequestDto.getPickup());
       BigDecimal fare = paymentService.getFare(rideRequestDto.getPickup(), rideRequestDto.getDrop(),
-          originalCategory, rideRequestDto.getVoucherCode());
+          requestedCategory, rideRequestDto.getVoucherCode());
       Driver driver = driverService.getDriverByVehicleId(vehicle.getId());
 
       //TODO: MapStruct
@@ -54,7 +57,7 @@ public class RideService {
           .pickupLongitude(rideRequestDto.getPickup().getLongitude())
           .dropLatitude(rideRequestDto.getDrop().getLatitude())
           .dropLongitude(rideRequestDto.getDrop().getLongitude())
-          .vehicleCategory(vehicle.getCategory())
+          .vehicleCategory(requestedCategory)
           .passengers(rideRequestDto.getPassengers())
           .userId(rideRequestDto.getUserId())
           .driverId(driver.getId())
@@ -76,7 +79,7 @@ public class RideService {
     RideRequest rideRequest = rideRequestOpt.get();
 
     Trip trip = Trip.builder()
-        .tripStatus(TripStatus.BOOKED)
+        .tripStatus(TripStatus.IN_PROGRESS)
         .amount(rideRequest.getAmount())
         .pickupLatitude(rideRequest.getPickupLatitude())
         .pickupLongitude(rideRequest.getPickupLongitude())
@@ -86,13 +89,56 @@ public class RideService {
         .driverId(rideRequest.getDriverId())
         .build();
 
+    Driver driver = getAvailableDriverForRideRequest(rideRequest);
+    driverService.updateStatus(driver.getId(), VehicleStatus.TRIP_IN_PROGRESS);
     return rideRepo.save(trip);
   }
 
-  public Trip updateStatus(long tripId, TripUpdateDto tripUpdateDto) {
+  public Trip completeRide(long tripId) {
     Trip trip = getById(tripId);
-    trip.setTripStatus(tripUpdateDto.getTripStatus());
+    long driverId = trip.getDriverId();
+    Driver driver = driverService.getDriverById(driverId);
+    Vehicle vehicle = vehicleFactory.getVehicleService(driver.getVehicleType()).getVehicleById(driver.getVehicleId());
+    vehicle.setStatus(VehicleStatus.AVAILABLE);
+    return updateStatus(tripId, TripStatus.COMPLETED);
+  }
+
+  private Trip updateStatus(long tripId, TripStatus tripStatus) {
+    Trip trip = getById(tripId);
+    trip.setTripStatus(tripStatus);
     return rideRepo.save(trip);
+  }
+
+  public List<Trip> getCompletedRides(UserType userType, long id) {
+    switch (userType) {
+      case RIDER:
+        return getRidesHistoryOfRider(id);
+      case DRIVER:
+        return getRidesHistoryOfDriver(id);
+      default:
+        throw new RuntimeException("Invalid input");
+    }
+  }
+
+  private List<Trip> getRidesHistoryOfDriver(long driverId) {
+    return rideRepo.getAllByDriverIdAndTripStatusIn(driverId, List.of(TripStatus.COMPLETED, TripStatus.IN_PROGRESS));
+  }
+
+  private List<Trip> getRidesHistoryOfRider(long userId) {
+    return rideRepo.getAllByUserIdAndTripStatusIn(userId, List.of(TripStatus.COMPLETED, TripStatus.IN_PROGRESS));
+  }
+
+  private Driver getAvailableDriverForRideRequest(RideRequest rideRequest) {
+    Driver driver = driverService.getDriverById(rideRequest.getDriverId());
+    Vehicle vehicle = vehicleFactory.getVehicleService(driver.getVehicleType())
+        .getVehicleById(driver.getVehicleId());
+    if(!vehicle.getStatus().equals(VehicleStatus.AVAILABLE)) {
+      vehicle = vehicleFactory.getVehicleService(driver.getVehicleType())
+          .getAvailableVehicle(rideRequest.getVehicleCategory(),
+              new Location(rideRequest.getPickupLatitude(), rideRequest.getPickupLongitude()));
+      driver = driverService.getDriverByVehicleId(vehicle.getId());
+    }
+    return driver;
   }
 
   private Trip getById(long id) {

@@ -30,8 +30,8 @@ public class CarService extends AbstractVehicleService{
   @Override
   public List<Vehicle> getAllByCategoryStatusLatitudeAndLongitude(VehicleCategory vehicleCategory,
       VehicleStatus status, BigDecimal latStart, BigDecimal latEnd, BigDecimal longStart, BigDecimal longEnd) {
-    return carRepo.getAllByCategoryAndStatusAndLatitudeBetweenAndLongitudeBetween(
-        vehicleCategory, VehicleStatus.AVAILABLE, latStart, latEnd, longStart, longEnd);
+    return carRepo.getAllByCategoryAndStatusAndLatitudeBetweenAndLongitudeBetween(vehicleCategory,
+        status, latStart, latEnd, longStart, longEnd);
   }
 
   @Override

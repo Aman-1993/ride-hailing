@@ -13,7 +13,7 @@ public class DiscountService {
   VoucherService voucherService;
 
   public BigDecimal computeDiscount(BigDecimal actualCost, String voucherCode) {
-    Optional<Voucher> voucherOpt = voucherService.getVoucherByCode(voucherCode);
+    Optional<Voucher> voucherOpt = voucherService.getActiveVoucherByCode(voucherCode);
     BigDecimal discount = BigDecimal.ZERO;
     if(voucherOpt.isPresent()) {
       Voucher voucher = voucherOpt.get();

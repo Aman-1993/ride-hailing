@@ -1,9 +1,11 @@
 package com.uc.rideservice.service;
 
 import com.uc.rideservice.dto.UserDto;
+import com.uc.rideservice.entity.Trip;
 import com.uc.rideservice.entity.Users;
 import com.uc.rideservice.mapper.UserMapper;
 import com.uc.rideservice.repo.UserRepo;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +13,10 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   @Autowired
-  UserMapper userMapper;
+  private UserMapper userMapper;
 
   @Autowired
-  UserRepo userRepo;
+  private UserRepo userRepo;
 
   public Users registerUser(UserDto userDto) {
     Users user = userMapper.toEntity(userDto);

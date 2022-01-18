@@ -5,7 +5,6 @@ import com.uc.rideservice.dto.VehicleDto;
 import com.uc.rideservice.entity.Vehicle;
 import com.uc.rideservice.enums.VehicleCategory;
 import com.uc.rideservice.enums.VehicleStatus;
-import com.uc.rideservice.enums.VehicleType;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ public interface IVehicleService {
 
   Vehicle saveOrUpdateVehicle(Vehicle vehicle);
 
-  Vehicle getAvailableVehicle(VehicleType vehicleType, VehicleCategory category, Location pickup);
+  Vehicle getAvailableVehicle(VehicleCategory category, Location pickup);
 
   List<Vehicle> getAllByCategoryStatusLatitudeAndLongitude(VehicleCategory vehicleCategory,
       VehicleStatus status, BigDecimal latitudeStart, BigDecimal latitudeEnd,

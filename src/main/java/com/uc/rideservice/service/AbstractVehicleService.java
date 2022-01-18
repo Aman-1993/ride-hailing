@@ -15,7 +15,8 @@ public abstract class AbstractVehicleService implements IVehicleService{
   @Value("${ride.search.threshold.radius}")
   private BigDecimal thresholdRadius;
 
-  public Vehicle getAvailableVehicle(VehicleType vehicleType, VehicleCategory category, Location pickup) {
+  @Override
+  public Vehicle getAvailableVehicle(VehicleCategory category, Location pickup) {
 
     Optional<Vehicle> vehicle = getAvailableVehicleForCategory(category, pickup);
     if(vehicle.isEmpty()) {
